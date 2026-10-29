@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Where's Ja?</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎤</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #13071f;
+    --bg-2: #1d0b31;
+    --panel: #261040;
+    --line: rgba(226, 204, 255, .16);
+    --ink: #f7f0ff;
+    --ink-dim: #c7b3e6;
+    --violet: #9b5cff;
+    --violet-deep: #6d35c9;
+    --violet-hot: #c39bff;
+    --gold: #f2c14e;
+    --gold-deep: #a87f22;
+    --paper: #fbf6ff;
+    --paper-ink: #24103d;
+    --paper-dim: #6b5590;
+
+    --display: "Anton", Impact, "Arial Narrow", sans-serif;
+    --serif: "Fraunces", Georgia, serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { color-scheme: dark; }
+
+  /* One screen, no page scroll: ticker / app / footer bar */
+
+  body {
+    margin: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    background:
+      radial-gradient(1100px 600px at 85% -10%, rgba(155, 92, 255, .38), transparent 60%),
+      radial-gradient(800px 500px at -10% 35%, rgba(242, 193, 78, .07), transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+  }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--violet-hot); outline-offset: 2px; }
+
+  /* Breaking-news ticker */
+
+  .ticker { display: flex; background: var(--gold); color: var(--bg); font-family: var(--mono); font-weight: 600; font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .ticker-label { flex: none; background: var(--violet-deep); color: #fff; padding: .4rem .9rem; }
+  .ticker-viewport { flex: 1; overflow: hidden; }
+  .ticker-track { display: inline-flex; padding: .4rem 0; animation: ticker 70s linear infinite; }
+  .ticker-track span { padding: 0 1rem; }
+  .ticker-track span::after { content: "◆"; padding-left: 2rem; opacity: .6; }
+  @keyframes ticker { to { transform: translateX(-50%); } }
+
+  /* App grid */
+
+  .app {
+    min-height: 0; width: 100%; max-width: 1280px; margin: 0 auto;
+    padding: clamp(10px, 2.6vh, 28px) clamp(16px, 3vw, 40px);
+    display: grid; grid-template-columns: minmax(240px, .85fr) minmax(0, 1.6fr);
+    gap: clamp(12px, 2vh, 20px) clamp(20px, 3.5vw, 48px);
+  }
+
+  /* Identity column */
+
+  .identity { min-height: 0; display: flex; flex-direction: column; justify-content: center; }
+  .portrait { align-self: flex-start; margin: 0 0 clamp(8px, 2vh, 18px); }
+  .frame {
+    position: relative; height: clamp(110px, 30vh, 300px); aspect-ratio: 5 / 6; overflow: hidden;
+    border: 3px solid var(--gold); border-radius: 18px; background: var(--bg-2);
+    box-shadow: 0 0 0 6px var(--bg), 0 0 0 8px rgba(242, 193, 78, .35), 0 30px 60px -20px rgba(155, 92, 255, .65);
+    transform: rotate(-2deg);
+  }
+  .frame.has-photo { background: var(--violet-deep); }
+  .frame svg, .frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .frame img { filter: grayscale(1) contrast(1.15); mix-blend-mode: luminosity; }
+  .portrait figcaption { margin-top: 14px; text-align: center; }
+  .plate { display: inline-block; padding: .05rem .9rem; border-radius: 4px; background: linear-gradient(#f7d77e, #c99a2e); color: var(--bg); font-family: var(--display); font-size: 1.2rem; letter-spacing: .08em; }
+  .plate em { font-family: var(--mono); font-size: .68rem; font-style: normal; font-weight: 600; letter-spacing: .1em; vertical-align: middle; }
+  .portrait small { display: block; max-width: 24ch; margin: 6px auto 0; color: var(--ink-dim); font-family: var(--mono); font-size: .68rem; line-height: 1.4; }
+
+  .eyebrow { margin: 0 0 .4rem; color: var(--gold); font-family: var(--mono); font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; }
+  h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(2.8rem, 10.5vh, 7rem); line-height: .86; text-transform: uppercase; text-shadow: 0 0 40px rgba(155, 92, 255, .55); }
+  h1 .q { color: var(--gold); }
+  .lede { max-width: 32ch; margin: clamp(8px, 1.6vh, 16px) 0; font-family: var(--serif); font-size: clamp(.95rem, 2.1vh, 1.2rem); line-height: 1.45; }
+  .lede em { color: var(--violet-hot); }
+  .disclaimer-chip { display: inline-block; align-self: flex-start; margin: 0; padding: .3rem .75rem; border: 1px dashed rgba(242, 193, 78, .6); border-radius: 999px; color: var(--gold); font-family: var(--mono); font-size: .68rem; }
+
+  /* Stage column */
+
+  .stage { min-height: 0; display: flex; flex-direction: column; gap: clamp(10px, 1.8vh, 16px); }
+  .desk { padding: clamp(12px, 2vh, 18px); border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(180deg, var(--panel), rgba(38, 16, 64, .55)); }
+  .label { display: block; margin-bottom: .5rem; color: var(--ink-dim); font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; }
+  .ask-row { display: flex; gap: 10px; }
+  .ask-row input {
+    flex: 1; min-width: 0; padding: .7rem .9rem;
+    border: 2px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink);
+    font-family: var(--serif); font-size: 1.08rem;
+  }
+  .ask-row input:focus { outline: none; border-color: var(--violet); box-shadow: 0 0 0 4px rgba(155, 92, 255, .25); }
+  .btn-primary {
+    flex: none; padding: .6rem 1.2rem; border: 0; border-radius: 12px; cursor: pointer;
+    background: var(--gold); color: var(--bg); box-shadow: 0 5px 0 var(--gold-deep);
+    font-family: var(--display); font-size: 1.15rem; letter-spacing: .06em; text-transform: uppercase;
+    transition: transform .08s, box-shadow .08s;
+  }
+  .btn-primary:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--gold-deep); }
+  .btn-primary:disabled { opacity: .6; cursor: wait; }
+
+  h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 1.2rem; letter-spacing: .05em; text-transform: uppercase; }
+  .docket { margin-top: clamp(10px, 1.8vh, 16px); }
+  .docket-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .docket-tools { display: flex; gap: 8px; }
+  .ghost { padding: .35rem .8rem; border: 1px solid var(--gold); border-radius: 999px; background: transparent; color: var(--gold); cursor: pointer; font-family: var(--mono); font-size: .7rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .ghost:hover { background: var(--gold); color: var(--bg); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .chip { padding: .38rem .85rem; border: 1px solid var(--line); border-radius: 999px; background: rgba(19, 7, 31, .5); cursor: pointer; font-size: .88rem; white-space: nowrap; transition: background .15s, border-color .15s, transform .15s; }
+  .chip:hover { background: var(--violet); border-color: var(--violet); transform: translateY(-1px) rotate(-1deg); }
+  .is-busy .chip, .is-busy .ghost { opacity: .5; pointer-events: none; }
+
+  /* Podium: idle, loading, or the official take */
+
+  .podium { flex: 1; min-height: 0; display: flex; }
+  .podium > * { flex: 1; min-height: 0; }
+
+  .idle { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 20px; border: 2px dashed var(--line); border-radius: 16px; color: var(--ink-dim); text-align: center; }
+  .idle .seal { width: clamp(56px, 10vh, 96px); height: clamp(56px, 10vh, 96px); color: var(--gold); opacity: .55; }
+  .idle-title { margin: 6px 0 0; color: var(--ink); font-family: var(--display); font-size: clamp(1.4rem, 4vh, 2.2rem); text-transform: uppercase; letter-spacing: .03em; }
+  .idle-sub { max-width: 36ch; margin: 0; font-family: var(--serif); }
+
+  .take {
+    display: flex; flex-direction: column; overflow-y: auto;
+    padding: clamp(12px, 2vh, 22px) clamp(16px, 3vw, 34px);
+    border-top: 8px solid var(--violet-deep); border-radius: 6px;
+    background: var(--paper) repeating-linear-gradient(0deg, transparent 0 31px, rgba(109, 53, 201, .06) 31px 32px);
+    color: var(--paper-ink);
+    box-shadow: 0 30px 60px -25px rgba(0, 0, 0, .75);
+  }
+  .take-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--paper-ink); }
+  .take-no { margin: 0; font-family: var(--display); font-size: clamp(1.1rem, 2.6vh, 1.5rem); line-height: 1; letter-spacing: .04em; text-transform: uppercase; }
+  .take-date { margin: .35rem 0 0; color: var(--paper-dim); font-family: var(--mono); font-size: .7rem; }
+  .take-head .seal { flex: none; width: clamp(48px, 8vh, 72px); height: clamp(48px, 8vh, 72px); color: var(--violet-deep); transform: rotate(-12deg); }
+  .re { margin: 8px 0 2px; font-family: var(--mono); font-size: .85rem; }
+  .re b { color: var(--violet-deep); }
+  .position { margin: 2px 0 10px; font-family: var(--display); font-size: clamp(1.4rem, 4.2vh, 2.4rem); line-height: 1.05; text-transform: uppercase; }
+  .position span { background: linear-gradient(transparent 60%, rgba(242, 193, 78, .75) 60%); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .body { margin: 0; padding-left: 16px; border-left: 4px solid var(--gold); font-family: var(--serif); font-size: clamp(1rem, 1.5vh + .4vw, 1.25rem); line-height: 1.5; }
+  .body p { margin: 0; }
+  .typing::after { content: "▍"; color: var(--violet); animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .take-foot { margin-top: auto; padding-top: 10px; }
+  .meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5px; margin: 0; border: 1.5px solid var(--paper-ink); background: var(--paper-ink); }
+  .meta div { padding: 6px 10px; background: var(--paper); }
+  .meta dt { color: var(--paper-dim); font-family: var(--mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; }
+  .meta dd { margin: 1px 0 0; font-size: .9rem; font-weight: 700; }
+  .note { margin: 10px 0 0; padding: 6px 10px; border-radius: 4px; background: #fff3cd; color: #6b4e00; font-family: var(--mono); font-size: .72rem; }
+  .take-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
+  .signed { margin: 0; color: var(--paper-dim); font-family: var(--mono); font-size: .7rem; }
+  .take-actions { display: flex; gap: 8px; }
+  .take-actions button { padding: .45rem .9rem; border: 2px solid var(--paper-ink); border-radius: 999px; background: transparent; color: var(--paper-ink); cursor: pointer; font-family: var(--mono); font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  .take-actions button:first-child { background: var(--paper-ink); color: var(--paper); }
+  .take-actions button:disabled { opacity: .45; cursor: wait; }
+
+  .take.loading { align-items: center; justify-content: center; text-align: center; overflow: hidden; }
+  .where { margin: 0; color: var(--violet-deep); font-family: var(--display); font-size: clamp(2.6rem, 9vh, 5.5rem); text-transform: uppercase; animation: wobble .9s ease-in-out infinite alternate; }
+  .status { min-height: 1.5em; margin: .4rem 0 0; color: var(--paper-dim); font-family: var(--mono); }
+  @keyframes wobble { from { transform: scale(1) rotate(-1.5deg); } to { transform: scale(1.04) rotate(1.5deg); } }
+
+  /* Footer bar */
+
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px clamp(16px, 3vw, 40px); border-top: 1px solid var(--line); background: rgba(19, 7, 31, .7); font-family: var(--mono); font-size: .7rem; }
+  .bar-note { margin: 0; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-note .short { display: none; }
+  .bar-tools { display: flex; flex: none; gap: 8px; margin-left: auto; }
+  .narrow { display: none; }
+  .bar-btn { display: inline-flex; align-items: center; gap: 8px; padding: .35rem .75rem; border: 1px solid var(--line); border-radius: 999px; background: var(--bg-2); cursor: pointer; font-family: var(--mono); font-size: .7rem; }
+  .bar-btn:hover { border-color: var(--violet); }
+  .bar-btn b { color: var(--gold); font-weight: 600; }
+  .dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--ink-dim); box-shadow: 0 0 0 3px rgba(199, 179, 230, .2); }
+  .dot.live { background: var(--gold); box-shadow: 0 0 0 3px rgba(242, 193, 78, .25), 0 0 10px var(--gold); }
+  .dot.bad { background: #ff6b8b; box-shadow: 0 0 0 3px rgba(255, 107, 139, .25); }
+
+  /* Dialogs (settings, archive) */
+
+  dialog { width: min(560px, calc(100vw - 32px)); max-height: 86dvh; padding: 0; border: 1px solid var(--line); border-radius: 18px; background: var(--bg-2); color: var(--ink); box-shadow: 0 40px 80px -20px rgba(0, 0, 0, .8); }
+  dialog::backdrop { background: rgba(10, 3, 18, .72); backdrop-filter: blur(4px); }
+  .dialog-head { position: sticky; top: 0; display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--line); background: var(--bg-2); }
+  .dialog-body { padding: 14px 18px 20px; color: var(--ink-dim); font-size: .92rem; }
+  .dialog-body p, .dialog-body ol { margin: 0 0 10px; }
+  .dialog-body a { color: var(--gold); }
+  .dialog-body b { color: var(--ink); }
+  .key-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 6px; }
+  .key-row input, .dialog-body select { flex: 1 1 220px; min-width: 0; padding: .6rem .8rem; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font-family: var(--mono); font-size: .85rem; }
+  .dialog-body select { width: 100%; }
+  .model-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+  .state { color: var(--violet-hot); font-family: var(--mono); font-size: .74rem; }
+  .state.bad { color: #ff9db3; }
+  .fineprint { margin: 18px 0 0 !important; padding-top: 14px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: .7rem; line-height: 1.65; }
+
+  .archive-list { display: grid; gap: 8px; margin: 0 0 14px; padding: 0; list-style: none; }
+  .archive-list details { border: 1px solid var(--line); border-radius: 12px; background: rgba(38, 16, 64, .5); }
+  .archive-list summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 10px 12px; cursor: pointer; }
+  .a-no { color: var(--gold); font-family: var(--mono); font-size: .7rem; }
+  .a-topic { color: var(--ink); font-family: var(--serif); }
+  .a-pos { margin-left: auto; color: var(--violet-hot); font-family: var(--display); font-size: .9rem; letter-spacing: .04em; text-transform: uppercase; }
+  .a-body { margin: 0; padding: 0 12px 12px; font-family: var(--serif); }
+
+  /* Short laptop screens */
+
+  @media (max-height: 760px) and (min-width: 900px) {
+    .portrait small, .desk .label { display: none; }
+    .lede { font-size: .95rem; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+    .chips::-webkit-scrollbar { display: none; }
+    .meta div { display: flex; align-items: baseline; gap: 6px; padding: 4px 8px; }
+    .meta dd { margin: 0; }
+    .take-head .seal { width: 44px; height: 44px; }
+    .signed { display: none; }
+    .take-row { justify-content: flex-end; }
+  }
+
+  /* Phones and narrow windows: stacked, compact header, swipeable docket */
+
+  @media (max-width: 899px) {
+    .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); padding-top: 10px; padding-bottom: 10px; }
+    .identity { flex-direction: row; align-items: center; justify-content: flex-start; gap: 14px; }
+    .portrait { margin: 0; }
+    .frame { height: 78px; border-width: 2px; border-radius: 10px; box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px rgba(242, 193, 78, .35); }
+    .portrait figcaption, .eyebrow, .lede { display: none; }
+    .masthead { display: flex; flex-direction: column; min-width: 0; }
+    h1 { font-size: clamp(2.2rem, 10vw, 3.6rem); }
+    h1 br { display: none; }
+    .disclaimer-chip { margin-top: 6px; padding: .15rem .55rem; font-size: .6rem; }
+    .desk .label { display: none; }
+    .btn-primary { padding: .5rem .9rem; font-size: 1rem; }
+    .docket-head h2 { font-size: 1rem; white-space: nowrap; }
+    .chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+    .chips::-webkit-scrollbar { display: none; }
+    .meta { grid-template-columns: repeat(2, 1fr); }
+    .bar-note .full { display: none; }
+    .bar-note .short { display: inline; }
+    .wide { display: none; }
+    .narrow { display: inline; }
+  }
+
+  @media (max-width: 440px) {
+    .bar-note { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track, .where, .typing::after { animation: none; }
+    .frame { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Shared seal, stamped on takes and the empty podium -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="seal" viewBox="0 0 120 120">
+    <path id="seal-ring" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" fill="none"/>
+    <circle cx="60" cy="60" r="57.5" fill="none" stroke="currentColor" stroke-width="2.5"/>
+    <circle cx="60" cy="60" r="53.5" fill="none" stroke="currentColor" stroke-width="1"/>
+    <circle cx="60" cy="60" r="35" fill="none" stroke="currentColor" stroke-width="1.5"/>
+    <text fill="currentColor" font-family="IBM Plex Mono, monospace" font-size="8.6" font-weight="600">
+      <textPath href="#seal-ring" textLength="280" lengthAdjust="spacing">★ OFFICE OF THE TAKE ★ QUEENS, NY ★ EST. 2001 </textPath>
+    </text>
+    <text x="60" y="72" text-anchor="middle" fill="currentColor" font-family="Anton, Impact, sans-serif" font-size="32">JA</text>
+  </symbol>
+</svg>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-label">Breaking</div>
+  <div class="ticker-viewport"><div class="ticker-track" id="ticker"></div></div>
+</div>
+
+<div class="app">
+  <header class="identity">
+    <figure class="portrait">
+      <div class="frame" id="frame">
+        <img id="ja-photo" src="ja.jpg" alt="" hidden>
+        <svg id="ja-silhouette" viewBox="0 0 300 360" role="img" aria-label="A silhouette. This is not a photo of Ja Rule.">
+          <defs>
+            <radialGradient id="halo" cx="50%" cy="38%" r="62%">
+              <stop offset="0" stop-color="#b57bff" stop-opacity=".6"/>
+              <stop offset="1" stop-color="#1d0b31" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="lens" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#4a2580"/>
+              <stop offset=".55" stop-color="#07020d"/>
+              <stop offset="1" stop-color="#6d35c9"/>
+            </linearGradient>
+          </defs>
+          <rect width="300" height="360" fill="#1d0b31"/>
+          <rect width="300" height="360" fill="url(#halo)"/>
+          <path d="M18 360 C 28 282, 90 252, 150 252 C 210 252, 272 282, 282 360 Z" fill="#0d0517"/>
+          <path d="M122 200 L 178 200 L 186 262 L 114 262 Z" fill="#0d0517"/>
+          <ellipse cx="86" cy="158" rx="11" ry="19" fill="#0d0517"/>
+          <ellipse cx="214" cy="158" rx="11" ry="19" fill="#0d0517"/>
+          <ellipse cx="150" cy="148" rx="64" ry="78" fill="#0d0517" stroke="#9b5cff" stroke-opacity=".35" stroke-width="2"/>
+          <rect x="99" y="132" width="45" height="27" rx="9" fill="url(#lens)"/>
+          <rect x="156" y="132" width="45" height="27" rx="9" fill="url(#lens)"/>
+          <rect x="142" y="139" width="16" height="5" rx="2" fill="#2a1245"/>
+          <path d="M107 139 L 121 139 M163 139 L 177 139" stroke="#e9d5ff" stroke-opacity=".55" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M116 258 C 118 306, 182 306, 184 258" fill="none" stroke="#f2c14e" stroke-width="5" stroke-dasharray="1 5" stroke-linecap="round"/>
+          <circle cx="150" cy="304" r="17" fill="#f2c14e"/>
+          <text x="150" y="314" text-anchor="middle" font-family="Anton, Impact, sans-serif" font-size="26" fill="#13071f">?</text>
+        </svg>
+      </div>
+      <figcaption>
+        <span class="plate">JA <em>(SIMULATED)</em></span>
+        <small id="portrait-note">Official portrait pending. Ja could not be reached.</small>
+      </figcaption>
+    </figure>
+
+    <div class="masthead">
+      <p class="eyebrow">The Office of the Take · Queens, NY · Est. 2001</p>
+      <h1>Where's<br> Ja<span class="q">?</span></h1>
+      <p class="lede">When the world stops making sense, a nation asks one question. Ja is unavailable. <em>This is a very cheap computer doing an impression.</em></p>
+      <p class="disclaimer-chip">⚠ Not Ja Rule · Ja was not reached for comment</p>
+    </div>
+  </header>
+
+  <main class="stage">
+    <section class="desk" aria-label="Ask Ja">
+      <form id="ask-form" autocomplete="off">
+        <label class="label" for="q">Submit a matter of national importance</label>
+        <div class="ask-row">
+          <input id="q" maxlength="300" placeholder="What's Ja's take on the Treaty of Westphalia?">
+          <button class="btn-primary" id="ask-btn" type="submit"><span class="wide">Get Ja's take</span><span class="narrow">Ask</span></button>
+        </div>
+      </form>
+
+      <div class="docket">
+        <div class="docket-head">
+          <h2>Today's docket</h2>
+          <div class="docket-tools">
+            <button class="ghost" id="shuffle" type="button">Shuffle</button>
+            <button class="ghost" id="random" type="button">Random<span class="wide"> crisis</span></button>
+          </div>
+        </div>
+        <ul class="chips" id="chips"></ul>
+      </div>
+    </section>
+
+    <section class="podium" id="podium" aria-live="polite"></section>
+  </main>
+</div>
+
+<footer class="bar">
+  <p class="bar-note">
+    <span class="full">Parody inspired by Chappelle's Show · Not Ja Rule · Not affiliated · Ja was not reached for comment</span>
+    <span class="short">Parody · Not Ja Rule</span>
+  </p>
+  <div class="bar-tools">
+    <button class="bar-btn" id="open-archive" type="button">Archives <b id="archive-count">0</b></button>
+    <button class="bar-btn" id="open-brain" type="button"><span class="dot" id="brain-dot"></span><span class="wide">Brain:</span> <span id="brain-status"></span></button>
+  </div>
+</footer>
+
+<dialog id="brain-dialog" aria-labelledby="brain-title">
+  <div class="dialog-head">
+    <h2 id="brain-title">Ja's brain</h2>
+    <button class="ghost" type="button" data-close>Close</button>
+  </div>
+  <div class="dialog-body">
+    <p>Without a key, takes come from the <b>Ja-Generator 3000</b>, an offline mad-libs machine. For real (very cheap) AI, add a free Groq key.</p>
+    <ol>
+      <li>Sign in at <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a>. Google login works.</li>
+      <li>Click <i>Create API Key</i> and copy it.</li>
+      <li>Paste it below. It stays in this browser only.</li>
+    </ol>
+    <form class="key-row" id="key-form">
+      <input id="key" type="password" placeholder="gsk_…" autocomplete="off" spellcheck="false">
+      <button class="ghost" type="submit">Save key</button>
+      <button class="ghost" type="button" id="forget-key">Forget key</button>
+    </form>
+    <p class="state" id="key-state"></p>
+
+    <label class="label" for="model" style="margin-top:16px">Brain size</label>
+    <div class="model-row">
+      <select id="model"></select>
+      <button class="ghost" type="button" id="reload-models">Refresh</button>
+    </div>
+    <p class="state" id="model-state" style="margin-top:8px"></p>
+
+    <p class="fineprint">Where's Ja? is a parody inspired by a Chappelle's Show sketch. It is not Ja Rule. It is not affiliated with Ja Rule or with anyone who has ever met Ja Rule, and Ja has never been reached for comment. Every take comes from the cheapest AI available and should not inform any policy, investment, treaty, or annexation.</p>
+  </div>
+</dialog>
+
+<dialog id="archive-dialog" aria-labelledby="archive-title">
+  <div class="dialog-head">
+    <h2 id="archive-title">The Ja Archives</h2>
+    <button class="ghost" type="button" data-close>Close</button>
+  </div>
+  <div class="dialog-body">
+    <ol class="archive-list" id="archive-list"></ol>
+    <p id="archive-empty">No takes on file. The nation is still waiting.</p>
+    <button class="ghost" id="clear-archive" type="button">Shred archives</button>
+  </div>
+</dialog>
+
+<template id="idle-tpl">
+  <div class="idle">
+    <svg class="seal" aria-hidden="true"><use href="#seal"/></svg>
+    <p class="idle-title">The podium is empty</p>
+    <p class="idle-sub">Pick a matter from the docket or ask your own. Ja is standing by.</p>
+  </div>
+</template>
+
+<template id="loading-tpl">
+  <article class="take loading">
+    <p class="where">Where's Ja?</p>
+    <p class="status" data-f="status"></p>
+  </article>
+</template>
+
+<template id="take-tpl">
+  <article class="take">
+    <header class="take-head">
+      <div>
+        <p class="take-no" data-f="no"></p>
+        <p class="take-date" data-f="date"></p>
+      </div>
+      <svg class="seal" aria-hidden="true"><use href="#seal"/></svg>
+    </header>
+    <p class="re"><b>RE:</b> <span data-f="topic"></span></p>
+    <p class="position"><span data-f="position"></span></p>
+    <blockquote class="body"><p data-f="body"></p></blockquote>
+    <div class="take-foot">
+      <dl class="meta">
+        <div><dt>Confidence</dt><dd>100%</dd></div>
+        <div><dt>Relevance</dt><dd data-f="relevance"></dd></div>
+        <div><dt>Sources</dt><dd data-f="source"></dd></div>
+        <div><dt>Cost to taxpayers</dt><dd>$0.00</dd></div>
+      </dl>
+      <p class="note" data-f="note" hidden></p>
+      <div class="take-row">
+        <p class="signed">Simulated Ja · <span data-f="brain"></span> · Not Ja Rule</p>
+        <div class="take-actions">
+          <button type="button" data-act="again">Ask again</button>
+          <button type="button" data-act="copy">Copy</button>
+        </div>
+      </div>
+    </div>
+  </article>
+</template>
+
+<script>
+(() => {
+  "use strict";
+
+  const CONFIG = {
+
+    // Paste a Groq key here to bake it into the file before sending it to a friend.
+    // Anyone with the file can read it. With no card on Groq, the worst case is a used-up daily quota.
+
+    groqKey: "",
+
+    // Used only until the page has asked Groq which models exist
+
+    defaultModel: "openai/gpt-oss-20b",
+    api: "https://api.groq.com/openai/v1",
+    dramaMs: 3000,
+
+    // Hard cap on take length. Cuts at a sentence end.
+
+    maxWords: 50,
+  };
+
+  // Groq models that can't chat, or that aren't worth defaulting to
+
+  const NOT_CHAT = /whisper|tts|guard|playai|orpheus|compound|allam|distil/i;
+
+  const SYSTEM_PROMPT = `You are SIMULATED JA, the AI behind a parody website called "Where's Ja?". It riffs on the Chappelle's Show joke where people want Ja Rule's take on serious world events. You do an over-the-top impression of an early-2000s Queens, New York rapper. You are not the real Ja Rule, and this is all a joke.
+
+The user asks for your take on a serious topic. Answer like this:
+1. Speak with total confidence and gravity, like a head of state at a press briefing.
+2. Engage only with the literal words in the question. Grab one or two words (like "housing", "Spain", "air", "dye") and riff on them. Do not explain the real issue, its history, or its facts.
+3. Pivot fast into motivational hustle talk: grinding, stacking paper, owning your masters, building your brand, loyalty, real estate, believing in yourself, the streets of Queens.
+4. Call yourself "Ja" at least once. Add ad-libs like "Yeah", "Uh", "Holla", "It's Murda".
+5. In about one answer out of three, throw a petty, vague jab at 50 Cent or G-Unit.
+6. Keep it PG-13 and good-natured. No slurs, no sexual content, no accusations of crimes against real people, and no real financial, legal, or medical advice. Never take a side in a real political fight. Turn it into hustle talk instead.
+
+Format your reply exactly like this:
+POSITION: <an official stance in 3 to 7 words>
+<one short paragraph, 30 to 45 words, then stop>
+
+Example:
+POSITION: PRO-DAM, ANTI-HATER
+Yeah. The Hoover Dam. A dam is just water that learned discipline, ya heard? Everybody wanna be the river, nobody wanna be the wall. Ja chose the wall. 50 couldn't build a dam with a blueprint. Own your masters. Holla.`;
+
+  const TOPICS = [
+    "the 2008 financial crisis", "the annexation of Western Sahara", "the Alamo", "the Clean Air Act",
+    "banning artificial dyes in food", "the housing crisis in Spain", "adjustable-rate mortgages",
+    "the Treaty of Westphalia", "the Great Emu War", "parking minimums", "Robert Moses",
+    "congestion pricing in Manhattan", "the Second Avenue Subway", "single-family zoning", "the Suez Crisis",
+    "Pluto losing planet status", "the Smoot-Hawley Tariff Act", "the Cod Wars", "Dutch tulip mania",
+    "the Defenestration of Prague", "daylight saving time", "the Oxford comma", "the Louisiana Purchase",
+    "the fall of Constantinople", "the Federal Reserve's dual mandate", "the spotted lanternfly",
+    "the Schleswig-Holstein Question", "the metric system", "the Panama Canal handover",
+    "the Bretton Woods system", "the War of 1812", "the Monroe Doctrine", "the Erie Canal",
+    "the Kyoto Protocol", "the Hanseatic League", "carbon offsets", "the Great Molasses Flood",
+    "the Dewey Decimal System", "the Treaty of Tordesillas", "the Platt Amendment",
+    "the Sykes-Picot Agreement", "the gold standard", "quantitative easing",
+    "the 1977 New York City blackout", "the Antarctic Treaty", "the Dust Bowl",
+  ];
+
+  const LOADING = [
+    "Locating Ja…",
+    "Ja is in the booth…",
+    "Ja is reviewing the briefing materials…",
+    "Ja has put the briefing materials down…",
+    "Formulating official position…",
+  ];
+
+  const SOURCES = [
+    "The streets", "Queens, NY", "A dream Ja had", "Ja's gut", "The booth",
+    "The Van Wyck", "Vibes", "Instinct", "The 2001 charts",
+  ];
+
+  // Ja-Generator 3000: offline mad-libs used without a key or when the API fails
+
+  const GEN = {
+    openers: [
+      "Let me be very clear about {topic}.",
+      "{Topic}. Yeah. Ja been thinking about {topic} since '99.",
+      "Everybody keep asking Ja about {topic}. Uh. Holla.",
+      "You want Ja's take on {topic}? Ja's take is simple.",
+      "Yeah, yeah. {Topic}. Ja knows a thing or two about {word}.",
+      "I'ma say this one time about {topic}, and then I'm done.",
+    ],
+    pivots: [
+      "When Ja hears \"{word}\", Ja hears opportunity.",
+      "{Word} is just another word for hustle, ya heard?",
+      "They talk about {word} like it's a problem. Ja calls that a business plan.",
+      "Back in Queens we ain't have {word}. We had heart.",
+      "You know what {word} really is? It's a mindset.",
+      "People been sleeping on {word}. Ja was never sleeping. Ja was in the booth.",
+    ],
+    hustle: [
+      "Wake up at 4 a.m., stack your paper, own your masters.",
+      "Never let nobody tell you what your {word} is worth.",
+      "Real estate. That's it. That's the answer.",
+      "Diversify your portfolio: one part grind, two parts loyalty.",
+      "Build your brand like a pyramid. Strong at the bottom, shiny at the top.",
+      "Every setback is a setup for a comeback. Write that down.",
+      "Ownership is everything. Own the building, own the block, own the {word}.",
+      "The haters gonna hate, but the hustlers gonna hustle. Pick a side.",
+    ],
+    fiddy: [
+      "And whatever 50 got to say about {topic}? He wrong. Period.",
+      "50 Cent would never understand {word}. That's all I'ma say.",
+      "G-Unit been real quiet on {word}. Ask yourself why.",
+      "Funny how 50 never had a position on {topic}. Ja got positions.",
+    ],
+    closers: ["It's Murda. Holla.", "Ja out.", "Always on time. Yeah.", "Stay hungry. Stay humble. Ja.", "Holla holla."],
+    positions: [
+      "Pro-hustle, anti-hater", "Firmly in favor of the grind", "Stack first, ask questions later",
+      "Bullish on {word}", "Neutral, but in a rich way", "It's Murda (policy-wise)",
+      "{Word}: complicated. Get money.", "Own your masters, then discuss",
+    ],
+  };
+
+  const STOP = new Set(("the a an of on in and or to for with about from into over under during what whats is are was were be " +
+    "ja rule your take thoughts opinion position stance view this that these those its their there how why when where who which").split(" "));
+
+  // Helpers
+
+  const $ = id => document.getElementById(id);
+  const tpl = id => $(id).content.firstElementChild.cloneNode(true);
+  const field = (root, name) => root.querySelector(`[data-f="${name}"]`);
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const rand = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const shuffled = arr => arr.map(v => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map(p => p[1]);
+  const shortName = id => id.split("/").pop();
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Falls back to memory when the browser blocks storage (previews, private windows)
+
+  const memory = new Map();
+  const store = {
+    get(k, fallback) {
+      try { const v = localStorage.getItem(k); return v === null ? fallback : JSON.parse(v); }
+      catch { return memory.has(k) ? memory.get(k) : fallback; }
+    },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { memory.set(k, v); } },
+    del(k) { try { localStorage.removeItem(k); } catch { memory.delete(k); } },
+  };
+  const canPersist = (() => {
+    try { localStorage.setItem("ja.probe", "1"); localStorage.removeItem("ja.probe"); return true; }
+    catch { return false; }
+  })();
+
+  const apiKey = () => store.get("ja.key", "") || CONFIG.groqKey;
+
+  // null until Groq has answered, then "ok" or "rejected"
+
+  let keyVerdict = null;
+
+  // Strips the usual copy-paste debris around a key
+
+  const unquote = s => s.trim().replace(/^["'`“”‘’]+|["'`“”‘’]+$/g, "").trim();
+  const cleanKey = raw => unquote(unquote(raw).replace(/^bearer\s+/i, ""));
+
+  // Chosen model if Groq still offers it, else the cheapest one Groq listed
+
+  function currentModel() {
+    const chosen = store.get("ja.model", null);
+    if (chosen === "offline") return "offline";
+    const list = store.get("ja.models", []);
+    if (list.some(m => m.id === chosen)) return chosen;
+    return list[0]?.id || CONFIG.defaultModel;
+  }
+
+  // Pulls the subject out of "What's Ja's take on X?"
+
+  function topicOf(question) {
+    const clean = question.trim().replace(/[?!.\s]+$/, "");
+    const m = clean.match(/\b(?:take|thoughts?|opinions?|position|stance|views?|feelings?)\s+(?:on|about|regarding)\s+(.+)$/i);
+    const topic = m ? m[1] : clean.replace(/^(?:ja(?:\s+rule)?[,:]?\s+)?(?:what about|how about)\s+/i, "");
+    return topic.trim() || clean;
+  }
+
+  function keywordOf(topic) {
+    const words = topic.split(/[^\p{L}\p{N}'’-]+/u).filter(w => w.length > 2 && !STOP.has(w.toLowerCase()));
+    if (!words.length) return topic;
+    words.sort((a, b) => b.length - a.length);
+    return pick(words.slice(0, 2));
+  }
+
+  function jaGenerator(question) {
+    const topic = topicOf(question);
+    const word = keywordOf(topic);
+    const fill = s => s.replaceAll("{topic}", topic).replaceAll("{Topic}", cap(topic))
+                       .replaceAll("{word}", word).replaceAll("{Word}", cap(word));
+    const parts = [pick(GEN.openers), pick(GEN.pivots), pick(GEN.hustle)];
+    if (Math.random() < 0.4) parts.push(pick(GEN.fiddy));
+    parts.push(pick(GEN.closers));
+    return {
+      position: fill(pick(GEN.positions)).toUpperCase(),
+      body: parts.map(fill).join(" "),
+      brain: "Ja-Generator 3000 (offline mad-libs)",
+    };
+  }
+
+  // Groq: list models, then chat (OpenAI-compatible)
+
+  const sizeOf = id => { const m = id.match(/(\d+(?:\.\d+)?)b\b/i); return m ? parseFloat(m[1]) : Infinity; };
+
+  async function fetchModels() {
+    const res = await fetch(`${CONFIG.api}/models`, { headers: { Authorization: `Bearer ${apiKey()}` } });
+    if (res.status === 401) throw Object.assign(new Error("Groq rejected the key"), { rejected: true });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const { data = [] } = await res.json();
+    return data
+      .filter(m => m.active !== false && !NOT_CHAT.test(m.id))
+      .map(m => ({ id: m.id, size: sizeOf(m.id) }))
+      .sort((a, b) => a.size - b.size || a.id.localeCompare(b.id));
+  }
+
+  // Also serves as the key check: Groq answers 401 here if it rejects the key
+
+  async function syncModels() {
+    if (!apiKey()) return;
+    $("model-state").textContent = "Asking Groq which brains are available…";
+    try {
+      const list = await fetchModels();
+      keyVerdict = "ok";
+      store.set("ja.models", list);
+      $("model-state").textContent = list.length
+        ? `Groq offers ${list.length} chat models to this key. Cheapest: ${shortName(list[0].id)}.`
+        : "Groq listed no chat models for this key.";
+    } catch (err) {
+      if (err.rejected) keyVerdict = "rejected";
+      $("model-state").textContent = `Couldn't load Groq's models (${err.message}).`;
+    }
+    refreshBrain();
+  }
+
+  // Reasoning models think before answering. These settings keep that short and out of the reply.
+
+  function reasoningParams(model) {
+    if (model.startsWith("openai/gpt-oss")) return { reasoning_effort: "low", include_reasoning: false };
+    if (/qwen/i.test(model)) return { reasoning_effort: "none" };
+    return {};
+  }
+
+  async function askGroq(question, model) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 25000);
+    let res;
+    try {
+      res = await fetch(`${CONFIG.api}/chat/completions`, {
+        method: "POST",
+        signal: ctrl.signal,
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey()}` },
+        body: JSON.stringify({
+          model,
+          temperature: 1.1,
+          max_completion_tokens: 700,
+          ...reasoningParams(model),
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: question },
+          ],
+        }),
+      });
+    } catch (err) {
+      throw new Error(err.name === "AbortError" ? "Groq took too long" : "couldn't reach Groq");
+    } finally {
+      clearTimeout(timer);
+    }
+
+    if (!res.ok) {
+      let detail = {};
+      try { detail = (await res.json()).error || {}; } catch {}
+      const err = new Error(
+        res.status === 401 ? "Groq rejected the key"
+        : res.status === 429 ? "Groq says slow down"
+        : detail.message || `HTTP ${res.status}`);
+      err.rejected = res.status === 401;
+      err.modelMissing = res.status === 404 || detail.code === "model_not_found";
+      throw err;
+    }
+
+    const data = await res.json();
+
+    // Drops reasoning blocks and leaked control tokens like <|constrain|>
+
+    const text = (data.choices?.[0]?.message?.content || "")
+      .replace(/<think>[\s\S]*?<\/think>/gi, "")
+      .replace(/^[\s\S]*<\|message\|>/i, "")
+      .replace(/<\|channel\|>\s*\w+/gi, " ")
+      .replace(/<\|[a-z_]+\|>/gi, " ")
+      .trim();
+    if (!text) throw new Error("Groq sent an empty answer");
+    return { ...parseTake(text), brain: `${shortName(model)} via Groq` };
+  }
+
+  function parseTake(text) {
+    const m = text.match(/^[\s*#_]*POSITION[\s*_]*:[\s*_]*(.+?)[\s*_]*$/im);
+    const position = m ? m[1] : pick(GEN.positions.filter(p => !p.includes("{")));
+    const body = (m ? text.replace(m[0], "") : text)
+      .replace(/\*\*|__/g, "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/^["“]|["”]$/g, "")
+      .trim();
+    return { position: position.toUpperCase(), body };
+  }
+
+  // Keeps whole sentences up to the word cap
+
+  function capWords(text, max) {
+    const sentences = text.match(/[^.!?]+[.!?]+["”’']?\s*|[^.!?]+$/g) || [text];
+    let out = "";
+    let count = 0;
+    for (const s of sentences) {
+      const n = s.trim().split(/\s+/).length;
+      if (count && count + n > max) break;
+      out += s;
+      count += n;
+    }
+    return out.trim();
+  }
+
+  // Tries the chosen model. If Groq retired it, reloads the model list and retries once.
+
+  async function getTake(question) {
+    const model = currentModel();
+    if (model === "offline" || !apiKey()) return jaGenerator(question);
+
+    let failure;
+    try {
+      return await askGroq(question, model);
+    } catch (err) {
+      failure = err;
+      if (err.modelMissing) {
+        await syncModels();
+        const next = currentModel();
+        if (next !== model && next !== "offline") {
+          try { return await askGroq(question, next); } catch (err2) { failure = err2; }
+        }
+      }
+    }
+    let fix = "";
+    if (failure.rejected) {
+      keyVerdict = "rejected";
+      refreshBrain();
+      fix = " Click the red dot at the bottom right to replace the key.";
+    }
+    return { ...jaGenerator(question), note: `The real brain failed (${failure.message}), so the backup brain stepped in.${fix}` };
+  }
+
+  // Podium
+
+  const podium = $("podium");
+  const input = $("q");
+  let busy = false;
+  let currentTake = null;
+
+  function setBusy(on) {
+    busy = on;
+    document.body.classList.toggle("is-busy", on);
+    $("ask-btn").disabled = on;
+    podium.setAttribute("aria-busy", String(on));
+    podium.querySelectorAll("[data-act]").forEach(b => { b.disabled = on; });
+  }
+
+  function showLoading() {
+    const node = tpl("loading-tpl");
+    const status = field(node, "status");
+    let i = 0;
+    status.textContent = LOADING[0];
+    const timer = setInterval(() => {
+      i = Math.min(i + 1, LOADING.length - 1);
+      status.textContent = LOADING[i];
+    }, CONFIG.dramaMs / LOADING.length);
+    podium.replaceChildren(node);
+    return () => clearInterval(timer);
+  }
+
+  async function typeOut(el, text) {
+    if (reduceMotion) { el.textContent = text; return; }
+    el.textContent = "";
+    el.classList.add("typing");
+    const tokens = text.split(/(\s+)/);
+    for (let i = 0; i < tokens.length; i++) {
+      el.textContent += tokens[i];
+      if (i % 2 === 0) await sleep(32);
+    }
+    el.classList.remove("typing");
+  }
+
+  function fillTake(node, take) {
+    field(node, "no").textContent = `Official Take № ${take.no.toLocaleString()}`;
+    field(node, "date").textContent = new Date(take.date).toLocaleString(undefined, {
+      weekday: "long", month: "long", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit",
+    });
+    field(node, "topic").textContent = take.topic;
+    field(node, "position").textContent = take.position;
+    field(node, "relevance").textContent = take.relevance;
+    field(node, "source").textContent = take.source;
+    field(node, "brain").textContent = take.brain;
+    if (take.note) {
+      const note = field(node, "note");
+      note.textContent = take.note;
+      note.hidden = false;
+    }
+    return node;
+  }
+
+  async function ask(question) {
+    question = question.trim();
+    if (!question || busy) return;
+    setBusy(true);
+    const stopLoading = showLoading();
+    const started = performance.now();
+
+    const result = await getTake(question);
+    result.body = capWords(result.body, CONFIG.maxWords);
+
+    const left = CONFIG.dramaMs - (performance.now() - started);
+    if (left > 0) await sleep(left);
+    stopLoading();
+
+    const take = {
+      id: Date.now(),
+      no: nextNumber(),
+      date: new Date().toISOString(),
+      question,
+      topic: cap(topicOf(question)),
+      relevance: `${rand(1, 19)}%`,
+      source: pick(SOURCES),
+      ...result,
+    };
+    currentTake = take;
+    saveTake(take);
+
+    const node = fillTake(tpl("take-tpl"), take);
+    podium.replaceChildren(node);
+    await typeOut(field(node, "body"), take.body);
+    setBusy(false);
+  }
+
+  function nextNumber() {
+    const n = store.get("ja.count", 4812) + 1;
+    store.set("ja.count", n);
+    return n;
+  }
+
+  // Copy works on http(s) and falls back for file:// pages
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      const ta = Object.assign(document.createElement("textarea"), { value: text });
+      ta.style.cssText = "position:fixed;opacity:0";
+      document.body.append(ta);
+      ta.select();
+      const ok = document.execCommand("copy");
+      ta.remove();
+      return ok;
+    }
+  }
+
+  function takeAsText(t) {
+    return `OFFICIAL TAKE № ${t.no.toLocaleString()}\nRE: ${t.topic}\nPOSITION: ${t.position}\n\n"${t.body}"\n\nSimulated Ja (not Ja Rule) · Where's Ja?`;
+  }
+
+  podium.addEventListener("click", async e => {
+    const btn = e.target.closest("[data-act]");
+    if (!btn || !currentTake || busy) return;
+    if (btn.dataset.act === "again") {
+      ask(currentTake.question);
+    } else if (btn.dataset.act === "copy") {
+      const ok = await copyText(takeAsText(currentTake));
+      btn.textContent = ok ? "Copied. Holla." : "Copy failed";
+      setTimeout(() => { btn.textContent = "Copy"; }, 1600);
+    }
+  });
+
+  // Archive (this browser only)
+
+  function saveTake(take) {
+    const list = store.get("ja.archive", []);
+    list.unshift(take);
+    store.set("ja.archive", list.slice(0, 25));
+    renderArchive();
+  }
+
+  function renderArchive() {
+    const list = store.get("ja.archive", []);
+    $("archive-count").textContent = list.length;
+    $("archive-empty").hidden = list.length > 0;
+    $("clear-archive").hidden = list.length === 0;
+    $("archive-list").replaceChildren(...list.map(t => {
+      const li = document.createElement("li");
+      const det = document.createElement("details");
+      const sum = document.createElement("summary");
+      const no = Object.assign(document.createElement("span"), { className: "a-no", textContent: `№ ${t.no.toLocaleString()}` });
+      const topic = Object.assign(document.createElement("span"), { className: "a-topic", textContent: t.topic });
+      const pos = Object.assign(document.createElement("span"), { className: "a-pos", textContent: t.position });
+      const body = Object.assign(document.createElement("p"), { className: "a-body", textContent: t.body });
+      sum.append(no, topic, pos);
+      det.append(sum, body);
+      li.append(det);
+      return li;
+    }));
+  }
+
+  $("clear-archive").addEventListener("click", () => {
+    store.del("ja.archive");
+    renderArchive();
+  });
+
+  // Dialogs
+
+  document.querySelectorAll("dialog").forEach(d => {
+    d.addEventListener("click", e => { if (e.target === d || e.target.closest("[data-close]")) d.close(); });
+  });
+  $("open-brain").addEventListener("click", () => $("brain-dialog").showModal());
+  $("open-archive").addEventListener("click", () => $("archive-dialog").showModal());
+
+  // Docket chips
+
+  function dealChips() {
+    $("chips").replaceChildren(...shuffled(TOPICS).slice(0, 6).map(topic => {
+      const li = document.createElement("li");
+      const b = Object.assign(document.createElement("button"), { className: "chip", type: "button", textContent: topic });
+      b.addEventListener("click", () => askAbout(topic));
+      li.append(b);
+      return li;
+    }));
+  }
+
+  function askAbout(topic) {
+    input.value = `What's Ja's take on ${topic}?`;
+    ask(input.value);
+  }
+
+  $("shuffle").addEventListener("click", dealChips);
+  $("random").addEventListener("click", () => askAbout(pick(TOPICS)));
+  $("ask-form").addEventListener("submit", e => { e.preventDefault(); ask(input.value); });
+
+  // Brain settings
+
+  function refreshBrain() {
+    const model = currentModel();
+    const key = apiKey();
+    const saved = store.get("ja.key", "");
+    const rejected = !!key && keyVerdict === "rejected";
+    const live = model !== "offline" && !!key && !rejected;
+    $("brain-dot").classList.toggle("live", live);
+    $("brain-dot").classList.toggle("bad", rejected);
+    $("brain-status").textContent = rejected ? "key rejected"
+      : live ? shortName(model)
+      : model === "offline" ? "offline"
+      : "offline · add key";
+
+    const tail = key ? ` (ends in …${key.slice(-4)})` : "";
+    const where = !key ? "No key saved yet."
+      : saved && !canPersist ? `Key active until you reload${tail}. This view can't save it. Open the page from Finder or localhost to keep it.`
+      : saved ? `Key saved${tail}.`
+      : `Using the key baked into this file${tail}.`;
+    const verdict = !key ? ""
+      : keyVerdict === "ok" ? " Groq accepted it."
+      : rejected ? " Groq rejected it. Make a fresh key at console.groq.com/keys and paste it here."
+      : "";
+    const odd = key && !key.startsWith("gsk_") ? " Heads up: Groq keys start with gsk_, and this one doesn't." : "";
+    $("key-state").textContent = where + verdict + odd;
+    $("key-state").classList.toggle("bad", rejected || !!odd);
+
+    const list = store.get("ja.models", []);
+    const options = list.map((m, i) => new Option(`${shortName(m.id)}${i === 0 ? " · cheapest (recommended)" : ""}`, m.id));
+    if (!list.length) options.push(new Option(`${shortName(CONFIG.defaultModel)} · default`, CONFIG.defaultModel));
+    options.push(new Option("Ja-Generator 3000 · no AI at all", "offline"));
+    $("model").replaceChildren(...options);
+    $("model").value = model;
+  }
+
+  $("key-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const k = cleanKey($("key").value);
+    if (!k) return;
+    if (/\s/.test(k)) {
+      $("key-state").textContent = "That has spaces or line breaks inside, so it's more than just the key. Copy the key again.";
+      $("key-state").classList.add("bad");
+      return;
+    }
+    store.set("ja.key", k);
+    $("key").value = "";
+    keyVerdict = null;
+    refreshBrain();
+    syncModels();
+  });
+
+  $("forget-key").addEventListener("click", () => {
+    keyVerdict = null;
+    store.del("ja.key");
+    store.del("ja.models");
+    $("model-state").textContent = "";
+    refreshBrain();
+  });
+
+  $("model").addEventListener("change", e => {
+    store.set("ja.model", e.target.value);
+    refreshBrain();
+  });
+
+  $("reload-models").addEventListener("click", syncModels);
+
+  // Portrait: shows ja.jpg if it sits next to this file, otherwise the silhouette
+
+  function usePhoto() {
+    $("ja-photo").hidden = false;
+    $("ja-silhouette").style.display = "none";
+    $("frame").classList.add("has-photo");
+    $("portrait-note").textContent = "Artist's impression. Not actually Ja.";
+  }
+  const photo = $("ja-photo");
+  if (photo.complete && photo.naturalWidth) usePhoto();
+  else photo.addEventListener("load", usePhoto, { once: true });
+
+  // Ticker
+
+  const tickerItems = [
+    "Nation demands Ja's take",
+    "Ja still not reached for comment",
+    "This is not Ja Rule",
+    `Markets await Ja's position on ${pick(TOPICS)}`,
+    "Cheapest AI on the market now online",
+    "Takes now cost $0.00",
+    "50 Cent declines to comment",
+    `Experts divided on ${pick(TOPICS)}. Ja is not.`,
+  ];
+  $("ticker").replaceChildren(...[...tickerItems, ...tickerItems].map(t =>
+    Object.assign(document.createElement("span"), { textContent: t })));
+
+  // Init
+
+  input.placeholder = `What's Ja's take on ${pick(TOPICS)}?`;
+  podium.replaceChildren(tpl("idle-tpl"));
+  dealChips();
+  refreshBrain();
+  renderArchive();
+  syncModels();
+})();
+</script>
+</body>
+</html>
